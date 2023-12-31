@@ -5,21 +5,24 @@
 
 <div class="container align-items-center bg-light col-5 rounded-3">
 <header class="text-center pt-5 pb-4"> <h1 class="font-monospace text-primary">Signup</h1> </header>
-    <form asp-action="SignUp" method="get">
+    <form asp-action="SignUp" method="post">
     <div>
-            <input asp-for="EMail" type="email" class="form-control mb-3" placeholder="Please Enter Email">
+            <input asp-for="EMail" type="email" class="form-control mb-3" placeholder="Please Enter Email" required>
     </div>
     <div>
-            <input asp-for="Password" type="password" class="form-control mb-3" placeholder="Please Enter Password">
+            <input asp-for="Password" type="password" class="form-control mb-3" placeholder="Please Enter Password" required>
     </div>
-    @* <div>
-            <input asp-for="Password" class="form-control mb-3" placeholder="Please re-Enter Password">
-    </div> *@
+    <div>
+            <input asp-for="RePassword" type="password" class="form-control mb-3" placeholder="Please re-Enter Password" required>
+    </div> 
     <div>
         <button type="submit" class="btn btn-outline-info form-control font-monospace text-decoration-none mb-3">Signup </button>
     </div>
     <div>
         <h6 class="pb-5 text-center font-monospace">Already have an account? @Html.ActionLink("Login", "LogIn", "Home")</h6>
+    </div>
+        <div class="alert alert-success">
+           @ViewBag.message
     </div>
 </form>
 </div>

@@ -5,7 +5,7 @@
 }
 <div class="container bg-light col-5 rounded-3">
     <header class="text-center pt-5 pb-4"> <h1 class="font-monospace text-primary">Login Form</h1> </header>
-    <form asp-action="LogIn" method="get">
+    <form asp-action="LogIn" method="post">
         <div>
             <input asp-for="EMail" type="email" class="form-control mb-3" placeholder="Please Enter Email" required>
         </div>
@@ -18,5 +18,9 @@
         <div>
             <h6 class="pb-5 text-center font-monospace">Don't have an account? @Html.ActionLink("Signup", "Signup", "Home")</h6>
         </div>
+            <div id="message" class="alert alert-success">
+                @ViewBag.message
+            </div>
+       
     </form>
 </div>

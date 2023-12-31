@@ -13,14 +13,98 @@ namespace LoginSignupFormWithPostgreSQL.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("LogIn");
         }
 
         public IActionResult LogIn(User user)
         {
             int userCount =  UserExist(user);
-            Console.WriteLine("Hey Here "+userCount+ "User avalable");
+            if (userCount != 1)
+            {
+                ViewBag.message = "Please Enter Valid Credential";
+                Console.WriteLine("Please Enter Valid Credential");
+            }
+            else
+            {
+                ViewBag.message = "Login Successful";
+                Console.WriteLine("Login Successful");
+            }
+            Console.WriteLine("Hey Here "+userCount+ "User available");
             return View();
+        }
+
+        public IActionResult SignUp(User user)
+        {
+            InsertUser(user);
+            return View();
+        }
+
+        private void InsertUser(User user)
+        {
+            int userCount = CheckUserAlreadyAvailableOrNot(user);
+            if (userCount >= 1) {
+                ViewBag.message = "User Already avilable";
+                Console.WriteLine("User Already avilable");
+                return;
+            }
+            else if (user.RePassword != user.Password) {
+                ViewBag.message = "Password are not same";
+                Console.WriteLine("Password are not same");
+                return;
+            }
+            else
+            {
+                using (var connection = new NpgsqlConnection(ConnectionString))
+                {
+                    connection.Open();
+
+                    using (var command = new NpgsqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.CommandText = "INSERT INTO users (email, password) VALUES (@email, @password)";
+                        command.Parameters.AddWithValue("@email", user.EMail);
+                        command.Parameters.AddWithValue("@password", user.Password);
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                            RedirectToAction("LogIn");
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        private int CheckUserAlreadyAvailableOrNot(User user)
+        {
+            using (var connection = new NpgsqlConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandText = "SELECT COUNT(*) FROM users WHERE email= @email";
+                    command.Parameters.Add(new NpgsqlParameter("@email", NpgsqlTypes.NpgsqlDbType.Varchar));
+                    command.Parameters["@email"].Value = user.EMail;
+                    try
+                    {
+                        int no = Convert.ToInt32(command.ExecuteScalar());
+                        Console.WriteLine("HELLO \nNumber of user  = " + command.ExecuteScalar());
+                        Console.WriteLine(no);
+                        return no;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+            return 0;
         }
 
         private int UserExist(User user)
@@ -39,9 +123,8 @@ namespace LoginSignupFormWithPostgreSQL.Controllers
                     command.Parameters["@password"].Value = user.Password;
                     try
                     {
-                        //command.ExecuteNonQuery();
                         int no = Convert.ToInt32(command.ExecuteScalar());
-                        Console.WriteLine("HELLO \nNumber of user  = "+ command.ExecuteScalar());
+                        Console.WriteLine("HELLO \nNumber of user  = " + command.ExecuteScalar());
                         Console.WriteLine(no);
                         return no;
                     }
@@ -52,39 +135,6 @@ namespace LoginSignupFormWithPostgreSQL.Controllers
                 }
             }
             return 0;
-        }
-
-
-        public IActionResult SignUp(User user)
-        {
-            InsertUser(user);
-            return View();
-        }
-
-        private void InsertUser(User user)
-        {
-            using (var connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-
-                using (var command = new NpgsqlCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandText = "INSERT INTO users (email, password) VALUES (@email, @password)";
-                    command.Parameters.AddWithValue("@email", user.EMail);
-                    command.Parameters.AddWithValue("@password", user.Password);
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                        
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-
-                    }
-                }
-            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

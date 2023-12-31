@@ -1,0 +1,22 @@
+﻿
+@model User
+@{
+    ViewData["Title"] = "LogIn";
+}
+<div class="container bg-light col-5 rounded-3">
+    <header class="text-center pt-5 pb-4"> <h1 class="font-monospace text-primary">Login Form</h1> </header>
+    <form asp-action="LogIn" method="get">
+        <div>
+            <input asp-for="EMail" type="email" class="form-control mb-3" placeholder="Please Enter Email" required>
+        </div>
+        <div>
+            <input asp-for="Password" type="password" class="form-control mb-3" placeholder="Please Enter Password" required >
+        </div>
+        <div>
+            <button type="submit" class="btn btn-outline-info form-control font-monospace text-decoration-none mb-3">LogIn</button>
+        </div>
+        <div>
+            <h6 class="pb-5 text-center font-monospace">Don't have an account? @Html.ActionLink("Signup", "Signup", "Home")</h6>
+        </div>
+    </form>
+</div>
